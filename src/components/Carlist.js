@@ -61,6 +61,7 @@ export default function Carlist() {
             sortable: false,
             filter: false,
             width: 120,
+            headerName: '',
             field: '_links.self.href',
             cellRenderer: ({value}) => <Button color = 'error' startIcon={<DeleteIcon />} onClick={() => deleteCar(value)}>Delete</Button>
         }
