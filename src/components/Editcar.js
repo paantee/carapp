@@ -5,13 +5,16 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import Addcar from './Addcar';
+
 
 function Editcar(props) {
     const [car, setCar] = useState({brand: '', model: '', color: '', fuel: '', year: '', price: ''});
     const [open, setOpen] = useState(false);
     
     const handleClickOpen = () => {
+        console.log(props.car);
+        setCar({brand: props.car.brand, model: props.car.model, color: props.car.color,
+             fuel: props.car.fuel, year: props.car.year, price: props.car.price})
         setOpen(true);
     };
 
@@ -23,10 +26,11 @@ function Editcar(props) {
         setCar({...car, [event.target.name]: event.target.value })
     }
 
-    const addCar = () => {
-        props.saveCar(car);
+    const updateCar = () => {
+        props.updateCar(car, props.car._links.car.href);
         handleClose();
     }
+    
     return (
         <div>
             <Button variant="outlined" color="primary" onClick={handleClickOpen}>
@@ -94,7 +98,7 @@ function Editcar(props) {
                     <Button onClick={handleClose} color="primary">
                         Cancel
                     </Button>
-                    <Button onClick={Addcar} color="primary">
+                    <Button onClick={updateCar} color="primary">
                         Save
                     </Button>
                 </DialogActions>

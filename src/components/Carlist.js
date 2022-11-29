@@ -9,6 +9,7 @@ import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import Addcar from './Addcar';
+import Editcar from './Editcar';
 
 
 export default function Carlist() {
@@ -49,6 +50,19 @@ export default function Carlist() {
             field: 'price',
             sortable: true,
             filter: true
+        },
+        {
+            sortable: false,
+            filter: false,
+            width: 100, 
+            cellRenderer: row => <Editcar updateCar={updateCar} car={row.data}/>
+        },
+        {
+            sortable: false,
+            filter: false,
+            width: 120,
+            field: '_links.self.href',
+            cellRenderer: ({value}) => <Button color = 'error' startIcon={<DeleteIcon />} onClick={() => deleteCar(value)}>Delete</Button>
         }
     ]
 
@@ -59,13 +73,11 @@ export default function Carlist() {
         console.log("cars")
     }
 
-    const deleteCar = () => {
-        if (gridRef.current.getSelectedNodes().length > 0) {
-        setCars(cars.filter((car, index) =>
-        index !== gridRef.current.getSelectedNodes()[0].childIndex));
-        setOpen(true);
-        } else {
-          alert('Select row first!');
+    const deleteCar = (link) => {
+        if (window.confirm('Are you sure?')) {
+            fetch(link, {method: 'DELETE'})
+            .then(res => fetchData())
+            .catch(err => console.error(err))
         }
       }
 
@@ -80,6 +92,19 @@ export default function Carlist() {
         .then(res => fetchData())
         .catch(err => console.error(err))
       }
+
+      const updateCar = (car, link) => {
+        fetch(link, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(car)
+        })
+        .then(res => fetchData())
+        .catch(err => console.error(err))
+      }
+
     return (
         <body>
         <div>
@@ -87,9 +112,6 @@ export default function Carlist() {
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Teemu's Carshop
-            <Button startIcon={<AddIcon/>} onClick={<Addcar saveCar={saveCar}/>} variant="contained">Add</Button>
-            <Button startIcon={<DeleteIcon/>} onClick={deleteCar} variant="contained">Delete</Button>
-            
           </Typography>
         </Toolbar>
       </AppBar>
